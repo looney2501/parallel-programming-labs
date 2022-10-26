@@ -9,34 +9,6 @@ import java.util.Scanner;
 
 public final class Utils {
 
-    public static void fileDiffs(Path p1, Path p2) throws IOException {
-        long mismatch = Files.mismatch(p1, p2);
-        if (mismatch != -1) {
-            System.out.printf("%s %s\n", p1, "=".repeat(100));
-            try (BufferedInputStream bf = new BufferedInputStream(new FileInputStream(p1.toFile()))) {
-                int pos = -1;
-                int ch;
-                while ((ch = bf.read()) != -1) {
-                    pos++;
-                    if (pos >= mismatch) {
-                        System.out.printf("%c", ch);
-                    }
-                }
-            }
-            System.out.printf("%s %s\n", p2, "=".repeat(100));
-            try (BufferedInputStream bf = new BufferedInputStream(new FileInputStream(p2.toFile()))) {
-                int pos = -1;
-                int ch;
-                while ((ch = bf.read()) != -1) {
-                    pos++;
-                    if (pos >= mismatch) {
-                        System.out.printf("%c", ch);
-                    }
-                }
-            }
-        }
-    }
-
     public static double[][] readMatrixFromFile(Path p) throws IOException {
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(p.toFile())))) {
             double[][] matrix;
