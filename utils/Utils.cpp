@@ -5,21 +5,20 @@
 #include "Utils.h"
 #include "fstream"
 #include "iostream"
+#include <filesystem>
 
-using std::ifstream, std::ofstream;
+using namespace std;
 
-double **Utils::readMatrixFromFile(const string& path) {
+void Utils::readMatrixFromFile(double **&matrix, int& m, int& n, const string& path) {
     ifstream fin(path);
-    int m, n;
     fin >> m >> n;
-    double** matrix = new double*[m];
+    matrix = new double*[m];
     for (int i = 0; i < m; i++) {
         matrix[i] = new double[n];
         for (int j = 0; j < n; j++) {
             fin >> matrix[i][j];
         }
     }
-    return matrix;
 }
 
 void Utils::writeMatrixToFile(const int& m, const int& n, double **&matrix, const string &path) {
@@ -56,7 +55,7 @@ double **Utils::generateRandomMatrix(const int &m, const int &n) {
     return matrix;
 }
 
-const double Utils::generatePixelValue() {
+double Utils::generatePixelValue() {
     double r = (double) rand() / RAND_MAX;
     return 255 * r;
 }
