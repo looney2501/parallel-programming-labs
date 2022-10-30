@@ -7,6 +7,7 @@ public final class InputDataGenerator {
         double[][] imageMatrix = Utils.generateRandomMatrix(M, N);
         try {
             Utils.writeInputMatrixToFile(imageMatrix, Path.of("lab1\\resources\\input\\imageMatrix.in"));
+            Utils.writeInputMatrixToFile(imageMatrix, Path.of("lab2\\resources\\input\\imageMatrix.in"));
             System.out.println("Done!");
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -16,6 +17,7 @@ public final class InputDataGenerator {
         double[][] filterMatrix = Utils.generateRandomMatrix(m, n);
         try {
             Utils.writeInputMatrixToFile(filterMatrix, Path.of("lab1\\resources\\input\\filterMatrix.in"));
+            Utils.writeInputMatrixToFile(filterMatrix, Path.of("lab2\\resources\\input\\filterMatrix.in"));
             System.out.println("Done!");
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -23,6 +25,6 @@ public final class InputDataGenerator {
     }
 
     public static void main(String[] args) {
-        lab1Generator(10000, 10, 5, 5);
+        lab1Generator(100, 100, 5, 5);
     }
 }
