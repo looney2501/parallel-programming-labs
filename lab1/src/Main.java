@@ -185,6 +185,6 @@ public class Main {
 
         Utils.writeMatrixToFile(filteredMatrix, Path.of("D:\\Proiecte\\Java\\PPD\\lab1\\resources\\output\\" + String.format("filteredMatrix-M%d-N%d-m%d-n%d-th%d", M, N, m, n, threadsNumber)));
 
-        System.out.println((double)(endTime - startTime)/1E6);
+        System.out.println(endTime - startTime);
     }
 }
