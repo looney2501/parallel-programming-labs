@@ -4,7 +4,7 @@
 #include <thread>
 #include <iostream>
 #include <sstream>
-#include "../utils/Utils.h"
+#include "../utils/utils.h"
 
 using namespace std;
 
@@ -88,8 +88,8 @@ int main(int argc, char** argv) {
 
     double** imageMatrix, ** filterMatrix, ** filteredMatrix;
     int M, N, m, n;
-    Utils::readMatrixFromFile(imageMatrix, M, N, R"(D:\Proiecte\C++\PPD\lab1\resources\input\imageMatrix.in)");
-    Utils::readMatrixFromFile(filterMatrix, m, n, R"(D:\Proiecte\C++\PPD\lab1\resources\input\filterMatrix.in)");
+    utils::readMatrixFromFile(imageMatrix, M, N, R"(D:\Proiecte\C++\PPD\lab1\resources\input\imageMatrix.in)");
+    utils::readMatrixFromFile(filterMatrix, m, n, R"(D:\Proiecte\C++\PPD\lab1\resources\input\filterMatrix.in)");
     filteredMatrix = new double* [M];
     for (int i = 0; i < M; i++) {
         filteredMatrix[i] = new double [N];
@@ -102,8 +102,8 @@ int main(int argc, char** argv) {
         stringstream path;
         path << R"(D:\Proiecte\C++\PPD\lab1\resources\output\filteredMatrix-M)" << M << "-N" << N << "-m" << m << "-n"
              << n << "-th" << threadsNumber << "-dynamic";
-        Utils::writeMatrixToFile(M, N, filteredMatrix, path.str());
-        cout << chrono::duration<double, milli> ((finish-start)).count() << endl;
+        utils::writeMatrixToFile(M, N, filteredMatrix, path.str());
+        cout << chrono::duration<double, nano> ((finish-start)).count() << endl;
     }
     else {
         auto start = chrono::steady_clock::now();
@@ -112,8 +112,8 @@ int main(int argc, char** argv) {
         stringstream path;
         path << R"(D:\Proiecte\C++\PPD\lab1\resources\output\filteredMatrix-M)" << M << "-N" << N << "-m" << m << "-n"
              << n << "-th" << threadsNumber << "-dynamic";
-        Utils::writeMatrixToFile(M, N, filteredMatrix, path.str());
-        cout << chrono::duration<double, milli> ((finish-start)).count() << endl;
+        utils::writeMatrixToFile(M, N, filteredMatrix, path.str());
+        cout << chrono::duration<double, nano> ((finish-start)).count() << endl;
     }
 
     return 0;

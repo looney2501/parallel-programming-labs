@@ -8,7 +8,7 @@
 
 using std::string;
 
-class Utils {
+class utils {
 public:
     static void readMatrixFromFile(double **&matrix, int& m, int& n, const string& path);
     static void writeMatrixToFile(const int& m, const int& n, double**& matrix, const string& path);
