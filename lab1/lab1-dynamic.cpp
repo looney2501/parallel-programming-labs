@@ -3,8 +3,7 @@
 //
 #include <thread>
 #include <iostream>
-#include <sstream>
-#include "../utils/utils.h"
+#include "../utils/utils.cpp"
 
 using namespace std;
 
@@ -88,8 +87,8 @@ int main(int argc, char** argv) {
 
     double** imageMatrix, ** filterMatrix, ** filteredMatrix;
     int M, N, m, n;
-    utils::readMatrixFromFile(imageMatrix, M, N, R"(D:\Proiecte\C++\PPD\lab1\resources\input\imageMatrix.in)");
-    utils::readMatrixFromFile(filterMatrix, m, n, R"(D:\Proiecte\C++\PPD\lab1\resources\input\filterMatrix.in)");
+    Utils::readMatrixFromFile(imageMatrix, M, N, R"(D:\Proiecte\C++\PPD\lab1\resources\input\imageMatrix.in)");
+    Utils::readMatrixFromFile(filterMatrix, m, n, R"(D:\Proiecte\C++\PPD\lab1\resources\input\filterMatrix.in)");
     filteredMatrix = new double* [M];
     for (int i = 0; i < M; i++) {
         filteredMatrix[i] = new double [N];
@@ -102,7 +101,7 @@ int main(int argc, char** argv) {
         stringstream path;
         path << R"(D:\Proiecte\C++\PPD\lab1\resources\output\filteredMatrix-M)" << M << "-N" << N << "-m" << m << "-n"
              << n << "-th" << threadsNumber << "-dynamic";
-        utils::writeMatrixToFile(M, N, filteredMatrix, path.str());
+        Utils::writeMatrixToFile(M, N, filteredMatrix, path.str());
         cout << chrono::duration<double, nano> ((finish-start)).count() << endl;
     }
     else {
@@ -112,7 +111,7 @@ int main(int argc, char** argv) {
         stringstream path;
         path << R"(D:\Proiecte\C++\PPD\lab1\resources\output\filteredMatrix-M)" << M << "-N" << N << "-m" << m << "-n"
              << n << "-th" << threadsNumber << "-dynamic";
-        utils::writeMatrixToFile(M, N, filteredMatrix, path.str());
+        Utils::writeMatrixToFile(M, N, filteredMatrix, path.str());
         cout << chrono::duration<double, nano> ((finish-start)).count() << endl;
     }
 
