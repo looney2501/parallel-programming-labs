@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
-#include <iostream>
 
 using std::string, std::ifstream, std::ofstream;
 
@@ -20,7 +19,7 @@ int *generateVectorOfIntegers(int size) {
 void writeInputVectorToFile(int *v, int n, string fileName) {
     ofstream fout(fileName);
     fout << n << '\n';
-    for (int i = n; i >= 0; i--) {
+    for (int i = n - 1; i >= 0; i--) {
         fout << v[i] << ' ';
     }
     fout.close();
@@ -35,11 +34,17 @@ void generateInputDataLab3(int n1, int n2) {
     delete[] v2;
 }
 
-void readVectorFromFile(int *&v, int &n, string fileName) {
+void readVectorFromFile(int *v, int &n, string fileName) {
     ifstream fin(fileName);
     fin >> n;
-    v = new int[n];
-    for (int i = n; i >= 0; i-) {
+    for (int i = n - 1; i >= 0; i--) {
         fin >> v[i];
+    }
+}
+
+void writeVectorToFile(int *v, int n, string fileName) {
+    ofstream fout(fileName);
+    for (int i = n - 1; i >= 0; i--) {
+        fout << v[i] << ' ';
     }
 }
