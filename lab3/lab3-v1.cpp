@@ -9,9 +9,9 @@
 using namespace std;
 
 unsigned char v1[SIZE], v2[SIZE], v3[SIZE];
-int n1, n2, n, chunkSize;
+int n1, n2, n, chunkSize, worldSize, processRank;
 
-void spreadData(int worldSize) {
+void spreadData() {
     int otherProcsNumber = worldSize - 1;
     ifstream fin1(R"(..\lab3\resources\input\number1.txt)");
     fin1 >> n1;
@@ -50,7 +50,7 @@ void spreadData(int worldSize) {
     MPI_Send(&carry, 1, MPI_BYTE, 1, 1111, MPI_COMM_WORLD);
 }
 
-void receiveData(int worldSize) {
+void receiveData() {
     int otherProcsNumber = worldSize - 1;
     for (int i = 0; i < otherProcsNumber; i++) {
         MPI_Status status;
@@ -61,20 +61,60 @@ void receiveData(int worldSize) {
     }
 }
 
+void calculateAndReturnResult() {
+    int start, end;
+    unsigned char carry, receivedCarry, maxCarry;
+
+    MPI_Status statusA;
+    MPI_Status statusB;
+    MPI_Status statusC;
+    MPI_Status statusD;
+
+    MPI_Recv(&chunkSize, 1, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusA);
+    MPI_Recv(v1 + chunkSize * (processRank - 1), chunkSize, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusB);
+    MPI_Recv(v2 + chunkSize * (processRank - 1), chunkSize, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusC);
+
+    start = chunkSize * (processRank - 1);
+    end = chunkSize * processRank;
+
+    carry = 0;
+    for (int i = start; i < end; i++) {
+        unsigned char s = v1[i] + v2[i] + carry;
+        v3[i] = s % 10;
+        carry = s / 10;
+    }
+
+    MPI_Recv(&receivedCarry, 1, MPI_BYTE, processRank - 1, 1111, MPI_COMM_WORLD, &statusD);
+
+    if (receivedCarry == 1) {
+        for (int i = start; i < end; i++) {
+            unsigned char s = v3[i] + receivedCarry;
+            v3[i] = s % 10;
+            receivedCarry = s / 10;
+        }
+    }
+
+    maxCarry = max(carry, receivedCarry);
+
+    MPI_Send(v3 + chunkSize * (processRank - 1), chunkSize, MPI_BYTE, 0, 1111, MPI_COMM_WORLD);
+
+    if (processRank < worldSize - 1) {
+        MPI_Send(&maxCarry, 1, MPI_BYTE, processRank + 1, 1111, MPI_COMM_WORLD);
+    }
+}
+
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
 
-    int rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
 
-    int worldSize;
     MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
 
-    if (rank == 0) {
+    if (processRank == 0) {
         auto start = chrono::steady_clock::now();
 
-        spreadData(worldSize);
-        receiveData(worldSize);
+        spreadData();
+        receiveData();
 
         auto finish = chrono::steady_clock::now();
         auto time = chrono::duration <double, nano>(finish - start).count();
@@ -82,45 +122,7 @@ int main(int argc, char** argv) {
 
         writeVectorToFile(v3, n, R"(..\lab3\resources\output\number3-v1.txt)");
     } else {
-        int start, end;
-        unsigned char carry, receivedCarry, maxCarry;
-
-        MPI_Status statusA;
-        MPI_Status statusB;
-        MPI_Status statusC;
-        MPI_Status statusD;
-
-        MPI_Recv(&chunkSize, 1, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusA);
-        MPI_Recv(v1 + chunkSize * (rank - 1), chunkSize, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusB);
-        MPI_Recv(v2 + chunkSize * (rank - 1), chunkSize, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusC);
-
-        start = chunkSize * (rank - 1);
-        end = chunkSize * rank;
-
-        carry = 0;
-        for (int i = start; i < end; i++) {
-            unsigned char s = v1[i] + v2[i] + carry;
-            v3[i] = s % 10;
-            carry = s / 10;
-        }
-
-        MPI_Recv(&receivedCarry, 1, MPI_BYTE, rank - 1, 1111, MPI_COMM_WORLD, &statusD);
-
-        if (receivedCarry == 1) {
-            for (int i = start; i < end; i++) {
-                unsigned char s = v3[i] + receivedCarry;
-                v3[i] = s % 10;
-                receivedCarry = s / 10;
-            }
-        }
-
-        maxCarry = max(carry, receivedCarry);
-
-        MPI_Send(v3 + chunkSize * (rank - 1), chunkSize, MPI_BYTE, 0, 1111, MPI_COMM_WORLD);
-
-        if (rank < worldSize - 1) {
-            MPI_Send(&maxCarry, 1, MPI_BYTE, rank + 1, 1111, MPI_COMM_WORLD);
-        }
+        calculateAndReturnResult();
     }
 
     MPI_Finalize();
