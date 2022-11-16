@@ -34,17 +34,11 @@ void generateInputDataLab3(int n1, int n2) {
     delete[] v2;
 }
 
-void readVectorFromFile(int *v, int &n, string fileName) {
-    ifstream fin(fileName);
-    fin >> n;
-    for (int i = n - 1; i >= 0; i--) {
-        fin >> v[i];
-    }
-}
-
-void writeVectorToFile(int *v, int n, string fileName) {
+void writeVectorToFile(unsigned char *v, int n, string fileName) {
     ofstream fout(fileName);
-    for (int i = n - 1; i >= 0; i--) {
-        fout << v[i] << ' ';
+    unsigned char digit;
+    for (int i = 0; i < n; i++) {
+        digit = v[i] + '0';
+        fout << digit << ' ';
     }
 }

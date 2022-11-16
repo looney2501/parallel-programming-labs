@@ -6,15 +6,31 @@
 
 using namespace std;
 
-int *v1, *v2, *v3, n1, n2, minL, carry, resultL;
+unsigned char *v1, *v2, *v3;
+int n1, n2, minL, carry, resultL;
 
 void setUp() {
-    v1 = new int[SIZE];
-    v2 = new int[SIZE];
-    v3 = new int[SIZE];
+    unsigned char digit;
+    v1 = new unsigned char [SIZE];
+    ifstream fin(R"(..\lab3\resources\input\number1.txt)");
+    fin >> n1;
+    for (int i = 0; i < n1; i++) {
+        fin >> digit;
+        v1[i] = digit - '0';
+    }
+    fin.close();
 
-    readVectorFromFile(v1, n1, R"(..\lab3\resources\input\number1.txt)");
-    readVectorFromFile(v2, n2, R"(..\lab3\resources\input\number2.txt)");
+    v2 = new unsigned char [SIZE];
+    fin = ifstream(R"(..\lab3\resources\input\number2.txt)");
+    fin >> n2;
+    for (int i = 0; i < n2; i++) {
+        fin >> digit;
+        v2[i] = digit - '0';
+    }
+    fin.close();
+
+    v3 = new unsigned char [SIZE];
+
     minL = min(n1, n2);
     resultL = n1 + n2 - minL + 1;
 }
