@@ -73,6 +73,9 @@ void calculate() {
 
 void receiveData() {
     MPI_Gather(v33, chunkSize, MPI_BYTE, v3, chunkSize, MPI_BYTE, 0, MPI_COMM_WORLD);
+    if (v3[n - 1] == 0) {
+        n--;
+    }
 }
 
 int main(int argc, char **argv) {
@@ -95,9 +98,8 @@ int main(int argc, char **argv) {
 
     if (processRank == 0) {
         cout << time;
+        writeVectorToFile(v3, n, R"(..\lab3\resources\output\number3-v2.txt)");
     }
-
-    writeVectorToFile(v3, n, R"(..\lab3\resources\output\number3-v2.txt)");
 
     MPI_Finalize();
 }
