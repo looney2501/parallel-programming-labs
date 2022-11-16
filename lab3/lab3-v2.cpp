@@ -14,9 +14,9 @@ int n1, n2, n, artificialLength, chunkSize, processRank, worldSize, carry, recei
 ifstream fin1, fin2;
 
 void calculateLengths() {
-    fin1 = ifstream(R"(..\lab3\resources\input\number1.txt)");
+    fin1 = ifstream(R"(D:\Proiecte\C++\PPD\lab3\resources\input\number1.txt)");
     fin1 >> n1;
-    fin2 = ifstream(R"(..\lab3\resources\input\number2.txt)");
+    fin2 = ifstream(R"(D:\Proiecte\C++\PPD\lab3\resources\input\number2.txt)");
     fin2 >> n2;
     n = max(n1, n2) + 1;
     chunkSize = n / worldSize;
@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
 
     if (processRank == 0) {
         cout << time;
-        writeVectorToFile(v3, n, R"(..\lab3\resources\output\number3-v2.txt)");
+        writeVectorToFile(v3, n, R"(D:\Proiecte\C++\PPD\lab3\resources\output\number3-v2.txt)");
     }
 
     MPI_Finalize();

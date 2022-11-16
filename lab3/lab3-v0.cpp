@@ -6,13 +6,12 @@
 
 using namespace std;
 
-unsigned char *v1, *v2, *v3;
+unsigned char v1[SIZE], v2[SIZE], v3[SIZE];
 int n1, n2, minL, carry, resultL;
 
 void setUp() {
     unsigned char digit;
-    v1 = new unsigned char [SIZE];
-    ifstream fin(R"(..\lab3\resources\input\number1.txt)");
+    ifstream fin(R"(D:\Proiecte\C++\PPD\lab3\resources\input\number1.txt)");
     fin >> n1;
     for (int i = 0; i < n1; i++) {
         fin >> digit;
@@ -20,8 +19,7 @@ void setUp() {
     }
     fin.close();
 
-    v2 = new unsigned char [SIZE];
-    fin = ifstream(R"(..\lab3\resources\input\number2.txt)");
+    fin = ifstream(R"(D:\Proiecte\C++\PPD\lab3\resources\input\number2.txt)");
     fin >> n2;
     for (int i = 0; i < n2; i++) {
         fin >> digit;
@@ -29,17 +27,12 @@ void setUp() {
     }
     fin.close();
 
-    v3 = new unsigned char [SIZE];
-
     minL = min(n1, n2);
     resultL = n1 + n2 - minL + 1;
 }
 
 void tearDown() {
-    writeVectorToFile(v3, resultL, R"(..\lab3\resources\output\number3-v0.txt)");
-    delete[] v1;
-    delete[] v2;
-    delete[] v3;
+    writeVectorToFile(v3, resultL, R"(D:\Proiecte\C++\PPD\lab3\resources\output\number3-v0.txt)");
 }
 
 void calculate() {

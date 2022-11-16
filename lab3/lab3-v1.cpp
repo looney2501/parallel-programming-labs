@@ -13,9 +13,9 @@ int n1, n2, n, chunkSize, worldSize, processRank;
 
 void spreadData() {
     int otherProcsNumber = worldSize - 1;
-    ifstream fin1(R"(..\lab3\resources\input\number1.txt)");
+    ifstream fin1(R"(D:\Proiecte\C++\PPD\lab3\resources\input\number1.txt)");
     fin1 >> n1;
-    ifstream fin2(R"(..\lab3\resources\input\number2.txt)");
+    ifstream fin2(R"(D:\Proiecte\C++\PPD\lab3\resources\input\number2.txt)");
     fin2 >> n2;
 
     n = max(n1, n2) + 1;
@@ -38,7 +38,7 @@ void spreadData() {
             j++;
         }
 
-        MPI_Send(&chunkSize, 1, MPI_BYTE, i + 1, 1111, MPI_COMM_WORLD);
+        MPI_Send(&chunkSize, 1, MPI_INT, i + 1, 1111, MPI_COMM_WORLD);
         MPI_Send(v1 + chunkSize * i, chunkSize, MPI_BYTE, i + 1, 1111, MPI_COMM_WORLD);
         MPI_Send(v2 + chunkSize * i, chunkSize, MPI_BYTE, i + 1, 1111, MPI_COMM_WORLD);
     }
@@ -67,7 +67,7 @@ void calculateAndReturnResult() {
     MPI_Status statusC;
     MPI_Status statusD;
 
-    MPI_Recv(&chunkSize, 1, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusA);
+    MPI_Recv(&chunkSize, 1, MPI_INT, 0, 1111, MPI_COMM_WORLD, &statusA);
     MPI_Recv(v1 + chunkSize * (processRank - 1), chunkSize, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusB);
     MPI_Recv(v2 + chunkSize * (processRank - 1), chunkSize, MPI_BYTE, 0, 1111, MPI_COMM_WORLD, &statusC);
 
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
         auto time = chrono::duration <double, nano>(finish - start).count();
         cout << time;
 
-        writeVectorToFile(v3, n, R"(..\lab3\resources\output\number3-v1.txt)");
+        writeVectorToFile(v3, n, R"(D:\Proiecte\C++\PPD\lab3\resources\output\number3-v1.txt)");
     } else {
         calculateAndReturnResult();
     }
