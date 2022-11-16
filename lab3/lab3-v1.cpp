@@ -45,9 +45,6 @@ void spreadData() {
 
     fin1.close();
     fin2.close();
-
-    unsigned char carry = 0;
-    MPI_Send(&carry, 1, MPI_BYTE, 1, 1111, MPI_COMM_WORLD);
 }
 
 void receiveData() {
@@ -84,7 +81,11 @@ void calculateAndReturnResult() {
         carry = s / 10;
     }
 
-    MPI_Recv(&receivedCarry, 1, MPI_BYTE, processRank - 1, 1111, MPI_COMM_WORLD, &statusD);
+    if (processRank == 1) {
+        receivedCarry = 0;
+    } else {
+        MPI_Recv(&receivedCarry, 1, MPI_BYTE, processRank - 1, 1111, MPI_COMM_WORLD, &statusD);
+    }
 
     if (receivedCarry == 1) {
         for (int i = start; i < end; i++) {
