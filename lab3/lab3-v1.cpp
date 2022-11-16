@@ -9,7 +9,7 @@
 using namespace std;
 
 unsigned char v1[SIZE], v2[SIZE], v3[SIZE];
-int n1, n2, n, resultLength, chunkSize;
+int n1, n2, n, chunkSize;
 
 void spreadData(int worldSize) {
     int otherProcsNumber = worldSize - 1;
@@ -21,7 +21,6 @@ void spreadData(int worldSize) {
     n = max(n1, n2) + 1;
     chunkSize = n / otherProcsNumber;
     if (n % otherProcsNumber != 0) chunkSize++;
-    resultLength = otherProcsNumber * chunkSize;
     unsigned char digit;
 
     for (int i = 0; i < otherProcsNumber; i++) {

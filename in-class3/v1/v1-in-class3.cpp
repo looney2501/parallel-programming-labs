@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
         MPI_Status statusB;
         MPI_Recv(a, length, MPI_INT, 0, 1111, MPI_COMM_WORLD, &statusA);
         MPI_Recv(b, length, MPI_INT, 0, 1111, MPI_COMM_WORLD, &statusB);
-        cout << "rank = " << rank << "; start = " << a[0] << "; end = " << a[length-1] << '\n';
+        cout << "processRank = " << rank << "; start = " << a[0] << "; end = " << a[length-1] << '\n';
         for (int i = 0; i < length; i++) {
             c[i] = a[i] + b[i];
         }

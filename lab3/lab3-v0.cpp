@@ -69,10 +69,9 @@ void calculate() {
 }
 
 int main(int argc, char** argv) {
-    setUp();
-
     auto start = chrono::steady_clock::now();
 
+    setUp();
     calculate();
 
     auto finish = chrono::steady_clock::now();
