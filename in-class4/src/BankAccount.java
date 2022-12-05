@@ -42,7 +42,6 @@ public class BankAccount {
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             System.out.println("se incearca blocare  " + to + "de catre " + Thread.currentThread().getId());
@@ -85,7 +84,6 @@ public class BankAccount {
             t1.join();
             t2.join();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
