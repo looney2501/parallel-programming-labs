@@ -7,8 +7,7 @@ public class Main {
         if (threadsNumber == 1) {
             result = Solver.sequentialSolve(10);
         } else {
-            //todo multithreading
-            result = null;
+            result = Solver.parallelSolve(10, threadsNumber);
         }
         long endTime = System.nanoTime();
 

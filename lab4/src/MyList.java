@@ -8,7 +8,7 @@ public class MyList {
         end = start.next;
     }
 
-    public void add(int exponent, double coefficient) {
+    public synchronized void add(int exponent, double coefficient) {
         Node prev = start;
         Node current = start.next;
 
