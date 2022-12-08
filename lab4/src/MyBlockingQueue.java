@@ -3,11 +3,9 @@ import java.util.Queue;
 
 public class MyBlockingQueue {
     Queue<Node> queue;
-    boolean finished;
 
     public MyBlockingQueue() {
         queue = new LinkedList<>();
-        finished = false;
     }
 
     public synchronized void put(int exponent, double coefficient) {
@@ -15,16 +13,17 @@ public class MyBlockingQueue {
         this.notifyAll();
     }
 
-    public synchronized void setFinished(boolean value) {
-        finished = value;
+    public synchronized void finish(int consumersNumber) {
+        for (int i = 0; i < consumersNumber; i++) {
+            queue.add(null);
+        }
         this.notifyAll();
     }
 
     public synchronized Node take() throws InterruptedException {
-        while (queue.isEmpty() && !finished) {
+        while (queue.isEmpty()) {
             this.wait();
         }
-        if (finished) return null;
         return queue.poll();
     }
 }

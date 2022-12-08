@@ -7,7 +7,7 @@ public class Solver {
         MyList result = new MyList();
 
         for (int i = 0; i < polynomialNumber; i++) {
-            String path = "lab4\\resources\\input\\polynomial" + i + ".in";
+            String path = "D:\\Proiecte\\Java\\PPD\\lab4\\resources\\input\\polynomial" + i + ".in";
             try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                 int monomialNumber = Integer.parseInt(reader.readLine().strip());
                 for (int j = 0; j < monomialNumber; j++) {
@@ -28,7 +28,7 @@ public class Solver {
         MyList result = new MyList();
         MyBlockingQueue queue = new MyBlockingQueue();
 
-        Producer producer = new Producer(queue, polynomialNumber);
+        Producer producer = new Producer(queue, polynomialNumber, threadsNumber - 1);
         producer.start();
 
         Consumer[] consumers = new Consumer[threadsNumber - 1];
@@ -52,16 +52,18 @@ public class Solver {
     private static class Producer extends Thread {
         MyBlockingQueue queue;
         int polynomialNumber;
+        int consumersNumbers;
 
-        public Producer(MyBlockingQueue queue, int polynomialNumber) {
+        public Producer(MyBlockingQueue queue, int polynomialNumber, int consumersNumber) {
             this.queue = queue;
             this.polynomialNumber = polynomialNumber;
+            this.consumersNumbers = consumersNumber;
         }
 
         @Override
         public void run() {
             for (int i = 0; i < polynomialNumber; i++) {
-                String path = "lab4\\resources\\input\\polynomial" + i + ".in";
+                String path = "D:\\Proiecte\\Java\\PPD\\lab4\\resources\\input\\polynomial" + i + ".in";
                 try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                     int monomialNumber = Integer.parseInt(reader.readLine().strip());
                     for (int j = 0; j < monomialNumber; j++) {
@@ -74,7 +76,7 @@ public class Solver {
                     throw new RuntimeException(e);
                 }
             }
-            queue.setFinished(true);
+            queue.finish(consumersNumbers);
         }
     }
 

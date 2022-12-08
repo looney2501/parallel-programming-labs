@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 public class UtilsLab4 {
     private static int generateRandomMonomialNumber(int bound) {
         Random r = new Random();
-        return r.nextInt(30, bound + 1);
+        return r.nextInt(70, bound + 1);
     }
 
     private static double generateRandomCoefficient() {
@@ -29,7 +29,7 @@ public class UtilsLab4 {
 
     public static void writeResultToFile(MyList list, int noThreads) {
         Node current = list.start.next;
-        String path = "lab4\\resources\\output\\result-th-" + noThreads + ".out";
+        String path = "D:\\Proiecte\\Java\\PPD\\lab4\\resources\\output\\result-th-" + noThreads + ".out";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
             while (current != list.end) {
                 writer.write(current.exponent + " " + current.coefficient);
@@ -43,7 +43,7 @@ public class UtilsLab4 {
     }
 
     public static void main(String[] args) {
-        int monomialNumberBound = 50;
+        int monomialNumberBound = 100;
         int polynomialDegreeBound = 1000;
         int polynomialNumber = 10;
 
@@ -51,7 +51,7 @@ public class UtilsLab4 {
             int monomialNumber = generateRandomMonomialNumber(monomialNumberBound);
             List<Integer> degrees = generateRandomDegrees(polynomialDegreeBound, monomialNumber);
 
-            String path = "lab4\\resources\\input\\polynomial" + i + ".in";
+            String path = "D:\\Proiecte\\Java\\PPD\\lab4\\resources\\input\\polynomial" + i + ".in";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
                 writer.write("" + monomialNumber);
                 writer.newLine();
