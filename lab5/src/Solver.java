@@ -1,13 +1,14 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.BrokenBarrierException;
 
 public class Solver {
     public static MyList sequentialSolve(int polynomialNumber) {
         MyList result = new MyList();
 
         for (int i = 0; i < polynomialNumber; i++) {
-            String path = "D:\\Proiecte\\Java\\PPD\\lab4\\resources\\input\\polynomial" + i + ".in";
+            String path = "D:\\proiecte\\Java\\PPD\\lab5\\resources\\input\\polynomial" + i + ".in";
             try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                 int monomialNumber = Integer.parseInt(reader.readLine().strip());
                 for (int j = 0; j < monomialNumber; j++) {
@@ -24,22 +25,39 @@ public class Solver {
         return result;
     }
 
-    public static MyList parallelSolve(int polynomialNumber, int threadsNumber) {
+    public static MyList parallelSolve(int polynomialNumber, int threadsNumber, int producersNumber) {
+        int consumersNumber = threadsNumber - producersNumber;
         MyList result = new MyList();
-        MyBlockingQueue queue = new MyBlockingQueue();
+        MyBlockingQueue queue = new MyBlockingQueue(producersNumber);
 
-        Producer producer = new Producer(queue, polynomialNumber);
-        producer.start();
+        int chunkSize = polynomialNumber / producersNumber;
+        int r = polynomialNumber % producersNumber;
+        int start = 0;
+        int end = chunkSize;
 
-        Consumer[] consumers = new Consumer[threadsNumber - 1];
-        for (int i = 0; i < threadsNumber - 1; i++) {
+        Producer[] producers = new Producer[producersNumber];
+        for (int i = 0; i < producersNumber; i++) {
+            if (r > 0) {
+                end++;
+                r--;
+            }
+            producers[i] = new Producer(queue, polynomialNumber, start, end);
+            producers[i].start();
+            start = end;
+            end += chunkSize;
+        }
+
+        Consumer[] consumers = new Consumer[consumersNumber];
+        for (int i = 0; i < consumersNumber; i++) {
             consumers[i] = new Consumer(queue, result);
             consumers[i].start();
         }
 
         try {
-            producer.join();
-            for (int i = 0; i < threadsNumber - 1; i++) {
+            for (int i = 0; i < producersNumber; i++) {
+                producers[i].join();
+            }
+            for (int i = 0; i < consumersNumber; i++) {
                 consumers[i].join();
             }
         } catch (InterruptedException e) {
@@ -52,20 +70,26 @@ public class Solver {
     private static class Producer extends Thread {
         MyBlockingQueue queue;
         int polynomialNumber;
+        int start;
+        int end;
 
-        public Producer(MyBlockingQueue queue, int polynomialNumber) {
+        public Producer(MyBlockingQueue queue, int polynomialNumber, int start, int end) {
             this.queue = queue;
             this.polynomialNumber = polynomialNumber;
+            this.start = start;
+            this.end = end;
         }
 
         @Override
         public void run() {
-            for (int i = 0; i < polynomialNumber; i++) {
-                String path = "D:\\proiecte\\Java\\PPD\\lab4\\resources\\input\\polynomial" + i + ".in";
+            int readLines = 0;
+            for (int i = start; i < end; i++) {
+                String path = "D:\\proiecte\\Java\\PPD\\lab5\\resources\\input\\polynomial" + i + ".in";
                 try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                     int monomialNumber = Integer.parseInt(reader.readLine().strip());
                     for (int j = 0; j < monomialNumber; j++) {
                         var line = reader.readLine().strip().split(" ");
+                        readLines++;
                         int exponent = Integer.parseInt(line[0].strip());
                         double coefficient = Double.parseDouble(line[1].strip());
                         queue.put(exponent, coefficient);
@@ -74,7 +98,11 @@ public class Solver {
                     throw new RuntimeException(e);
                 }
             }
-            queue.setFinished(true);
+            try {
+                queue.setFinished(true);
+            } catch (BrokenBarrierException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
