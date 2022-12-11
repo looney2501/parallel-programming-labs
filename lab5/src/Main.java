@@ -5,7 +5,7 @@ public class Main {
         if (threadsNumber != 1) {
             producersNumber = Integer.parseInt(args[1]);
         }
-        int polynomialNumber = 5;
+        int polynomialNumber = 10;
         MyList result;
 
         long startTime = System.nanoTime();

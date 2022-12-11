@@ -8,9 +8,11 @@ public class MyList {
         end = start.next;
     }
 
-    public synchronized void add(int exponent, double coefficient) {
+    public void add(int exponent, double coefficient) {
         Node prev = start;
+        prev.lock();
         Node current = start.next;
+        current.lock();
 
         //lista goala
         if (current == end) {
@@ -26,7 +28,9 @@ public class MyList {
                 current.coefficient += coefficient;
                 if (current.coefficient == 0) {
                     //daca coeficientul e 0, sterg monomul
+                    current.next.lock();
                     prev.next = current.next;
+                    current.next.unlock();
                 }
                 break;
             } else if (current.exponent > exponent) {
@@ -36,8 +40,10 @@ public class MyList {
                 prev.next = newNode;
                 break;
             }
+            prev.unlock();
             prev = current;
             current = current.next;
+            current.lock();
         }
 
         if (current == end) {
@@ -46,5 +52,8 @@ public class MyList {
             newNode.next = end;
             prev.next = newNode;
         }
+
+        prev.unlock();
+        current.unlock();
     }
 }

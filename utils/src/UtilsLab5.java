@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 public class UtilsLab5 {
     private static int generateRandomMonomialNumber(int bound) {
         Random r = new Random();
-        return r.nextInt(450, bound + 1);
+        return r.nextInt(90, bound + 1);
     }
 
     private static double generateRandomCoefficient() {
@@ -43,8 +43,8 @@ public class UtilsLab5 {
     }
 
     public static void main(String[] args) {
-        int monomialNumberBound = 500;
-        int polynomialDegreeBound = 100000;
+        int monomialNumberBound = 100;
+        int polynomialDegreeBound = 10000;
         int polynomialNumber = 5;
 
         for (int i = 0; i < polynomialNumber; i++) {
