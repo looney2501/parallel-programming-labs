@@ -28,7 +28,7 @@ public class Solver {
         MyList result = new MyList();
         MyBlockingQueue queue = new MyBlockingQueue();
 
-        Producer producer = new Producer(queue, polynomialNumber, threadsNumber - 1);
+        Producer producer = new Producer(queue, polynomialNumber);
         producer.start();
 
         Consumer[] consumers = new Consumer[threadsNumber - 1];
@@ -52,12 +52,10 @@ public class Solver {
     private static class Producer extends Thread {
         MyBlockingQueue queue;
         int polynomialNumber;
-        int consumersNumbers;
 
-        public Producer(MyBlockingQueue queue, int polynomialNumber, int consumersNumber) {
+        public Producer(MyBlockingQueue queue, int polynomialNumber) {
             this.queue = queue;
             this.polynomialNumber = polynomialNumber;
-            this.consumersNumbers = consumersNumber;
         }
 
         @Override
@@ -76,7 +74,7 @@ public class Solver {
                     throw new RuntimeException(e);
                 }
             }
-            queue.finish(consumersNumbers);
+            queue.setFinished(true);
         }
     }
 
@@ -95,11 +93,11 @@ public class Solver {
             do {
                 try {
                     node = queue.take();
+                    if (node != null) {
+                        result.add(node.exponent, node.coefficient);
+                    }
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
-                }
-                if (node != null) {
-                    result.add(node.exponent, node.coefficient);
                 }
             } while (node != null);
         }
