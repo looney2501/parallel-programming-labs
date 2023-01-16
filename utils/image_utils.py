@@ -12,7 +12,7 @@ headers = {
 }
 
 def generate_images(no_images, output_folder):
-    # create folder
+    # create folder_inputs
     cur_dir = os.getcwd()
     output = f'{os.path.abspath(os.path.join(cur_dir, os.pardir))}\\resources\\{output_folder}'
     if os.path.exists(output):
@@ -29,25 +29,24 @@ def generate_images(no_images, output_folder):
         image_response = requests.get(image_url, stream=True)
         image = image_response.content
 
-        # write image in folder
+        # write image in folder_inputs
         with open(output + f'\\{image_title}.jpg', 'wb') as file:
             file.write(image)
 
-# generate_images(5, 'test1')
+if __name__ == '__main__':
+    generate_images(5, 'inputs')
 
 
-def load_images_from_folder(folder):
-    images = []
+def load_images_and_name_from_folder(folder):
+    images_names = []
     for filename in glob.glob(folder + '/*.jpg'):
-        img = skimage.io.imread(filename, as_gray=True)
+        img = skimage.io.imread(filename)
+        # img = skimage.io.imread(filename, as_gray=True)
         if img is not None:
-            images.append(img)
-    return images
+            images_names.append((img, filename))
+    return images_names
 
 
-images = load_images_from_folder('D:\proiecte\Python\PDD-CUDA-project\\resources\\test1')
-
-plt.figure()
-plt.imshow(images[0], cmap='gray')
-plt.title("Before convolution:")
-plt.show()
+def save_image_to_folder(folder, name, image):
+    path = folder + '\\' + name.split("\\")[-1].replace(".jpg", "-filter.jpg")
+    skimage.io.imsave(path, image)
