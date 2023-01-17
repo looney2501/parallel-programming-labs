@@ -101,8 +101,8 @@ print(timeit(lambda: apply_laplacian_filter(), number=1))
 
 # We create back the full image
 convolved_image = np.dstack((d_result_channel_R, d_result_channel_G, d_result_channel_B))
-convolved_image = ((convolved_image - convolved_image.min()) * (
-        1 / (convolved_image.max() - convolved_image.min()) * 255)).astype('uint8')
+convolved_image = ((convolved_image - convolved_image.min()) *
+        1 / (convolved_image.max() - convolved_image.min()) * 255 ).astype('uint8')
 
 # We save our image to file
 save_image_to_folder(folder_outputs, name, convolved_image)
@@ -113,5 +113,9 @@ print(timeit(lambda: apply_scipy_filter(), number=1))
 # We save our image to file
 cpu_image_filename = name.split("\\")[-1].replace(".jpg", "-cpu.jpg")
 splitted_name = name[:-1].join("\\")
+
+
+output = ((output - output.min()) *
+        1 / (output.max() - output.min()) * 255 ).astype('uint8')
 
 save_image_to_folder(folder_outputs, splitted_name + cpu_image_filename, output)
