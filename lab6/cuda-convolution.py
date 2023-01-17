@@ -1,13 +1,8 @@
 import random
-from timeit import timeit
-
-import matplotlib.pyplot as plt
 import numpy as np
-import scipy
-import skimage.data
-from numba import cuda, types
-from numba.typed import List
+from numba import cuda
 from scipy.ndimage.filters import convolve as scipy_convolve
+from timeit import timeit
 from utils.image_utils import load_images_and_name_from_folder, save_image_to_folder
 
 
@@ -45,19 +40,33 @@ def convolve(result, mask, image, channel):
     result[i, j] = s
 
 
+def apply_laplacian_filter():
+    convolve[griddim, blockdim](d_result_channel_R, d_laPlacian, d_image, 0)
+    convolve[griddim, blockdim](d_result_channel_B, d_laPlacian, d_image, 1)
+    convolve[griddim, blockdim](d_result_channel_G, d_laPlacian, d_image, 2)
+
+
+global output
+
+
+def apply_scipy_filter():
+    global output
+    output = np.empty_like(image)
+    laPlacian = [
+        [[0, 0, 0], [1, 1, 1], [0, 0, 0]],
+        [[1, 1, 1], [-4, -4, -4], [1, 1, 1]],
+        [[0, 0, 0], [1, 1, 1], [0, 0, 0]],
+    ]
+    output = scipy_convolve(image, laPlacian, mode='constant', cval=0)
+
+
+# Load images
 folder_inputs = '..\\resources\\inputs'
 folder_outputs = '..\\resources\\outputs'
 images_names = load_images_and_name_from_folder(folder_inputs)
 image, name = images_names[random.randint(0, len(images_names) - 1)]
 
-plt.figure()
-plt.imshow(image, cmap='gray')
-plt.title("Full size image:")
-plt.figure()
-plt.imshow(image, cmap='gray')
-plt.title("Part of the image we use:")
-plt.show()
-
+# Mask matrix for LaPlacian filter (edge detection)
 laPlacian = np.array([
     [0, 1, 0],
     [1, -4, 1],
@@ -68,62 +77,41 @@ laPlacian = np.array([
 blockdim = (32, 32)
 
 # We compute grid dimensions big enough to cover the whole image:
-#           2600 x                               2200
 griddim = (image.shape[0] // blockdim[0] + 1, image.shape[1] // blockdim[1] + 1)
 
+# We get every colour channel of the image in order to apply convolution
 red_channel = image[:, :, 0]
 green_channel = image[:, :, 1]
 blue_channel = image[:, :, 2]
 
+# We create result channels
 result_channel_R = np.empty_like(red_channel)
 result_channel_G = np.empty_like(green_channel)
 result_channel_B = np.empty_like(blue_channel)
-# We apply our convolution to our image:
+
+# We transfer the data to the device memory, in order to calculate only the execution time
 d_result_channel_R = cuda.to_device(result_channel_R)
 d_result_channel_G = cuda.to_device(result_channel_G)
 d_result_channel_B = cuda.to_device(result_channel_B)
 d_laPlacian = cuda.to_device(laPlacian)
 d_image = cuda.to_device(image)
 
+# We apply our convolution to our image using the device and calculate the time:
+print(timeit(lambda: apply_laplacian_filter(), number=1))
 
-def apply_laplacian_filter():
-    convolve[griddim, blockdim](d_result_channel_R, d_laPlacian, d_image, 0)
-    convolve[griddim, blockdim](d_result_channel_B, d_laPlacian, d_image, 1)
-    convolve[griddim, blockdim](d_result_channel_G, d_laPlacian, d_image, 2)
-
-global output
-def apply_scipy_filter():
-    global output
-    output = np.empty_like(image)
-    laPlacian = [
-            [[0, 0, 0], [1, 1, 1], [0, 0, 0]],
-            [[1, 1, 1], [-4, -4, -4], [1, 1, 1]],
-            [[0, 0, 0], [1, 1, 1], [0, 0, 0]],
-          ]
-    output = scipy_convolve(image, laPlacian, mode='constant', cval=0)
-
-
-print(timeit(lambda: apply_laplacian_filter(), number=10))
-print(timeit(lambda: apply_scipy_filter(), number=10))
-# We plot the result:
-plt.figure()
-plt.imshow(image)
-plt.title("Before convolution:")
-plt.figure()
-# convolved_image = np.dstack((result_channel_R, np.empty_like(red_channel), np.empty_like(red_channel)))
+# We create back the full image
 convolved_image = np.dstack((d_result_channel_R, d_result_channel_G, d_result_channel_B))
 convolved_image = ((convolved_image - convolved_image.min()) * (
-1 / (convolved_image.max() - convolved_image.min()) * 255)).astype('uint8')
-# convolved_image = (convolved_image * 255).astype(np.uint8)
-# plt.imshow((convolved_image * 255).astype(np.uint8))
+        1 / (convolved_image.max() - convolved_image.min()) * 255)).astype('uint8')
 
-plt.imshow(output)
-plt.title("After convolution:")
-plt.show()
-
+# We save our image to file
 save_image_to_folder(folder_outputs, name, convolved_image)
 
-cpu_image_filename =  name.split("\\")[-1].replace(".jpg", "-cpu.jpg")
+# We apply our convolution to our image using the CPU
+print(timeit(lambda: apply_scipy_filter(), number=1))
+
+# We save our image to file
+cpu_image_filename = name.split("\\")[-1].replace(".jpg", "-cpu.jpg")
 splitted_name = name[:-1].join("\\")
 
 save_image_to_folder(folder_outputs, splitted_name + cpu_image_filename, output)

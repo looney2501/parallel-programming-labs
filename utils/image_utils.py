@@ -34,7 +34,7 @@ def generate_images(no_images, output_folder):
             file.write(image)
 
 if __name__ == '__main__':
-    generate_images(5, 'inputs')
+    generate_images(3, 'inputs')
 
 
 def load_images_and_name_from_folder(folder):
