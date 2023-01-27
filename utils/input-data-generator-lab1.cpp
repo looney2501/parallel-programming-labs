@@ -2,7 +2,7 @@
 // Created by Mircea on 26.10.2022.
 //
 #include <iostream>
-#include "utils.cpp"
+#include "utils-lab1.cpp"
 
 using namespace std;
 

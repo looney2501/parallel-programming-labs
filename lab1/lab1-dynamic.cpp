@@ -3,7 +3,7 @@
 //
 #include <thread>
 #include <iostream>
-#include "../utils/utils.cpp"
+#include "../utils/utils-lab1.cpp"
 
 using namespace std;
 

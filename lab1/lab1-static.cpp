@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "../utils/utils.cpp"
+#include "../utils/utils-lab1.cpp"
 
 #define M 10000
 #define N 10

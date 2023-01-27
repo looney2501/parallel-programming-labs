@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 
     MPI_Gather(cc, length, MPI_INT, c, length, MPI_INT, 0, MPI_COMM_WORLD);
 
-    cout << "rank = " << rank << "; start = " << aa[0] << "; end = " << aa[length-1] << '\n';
+    cout << "processRank = " << rank << "; start = " << aa[0] << "; end = " << aa[length-1] << '\n';
 
     if (rank == 0) {
         for (int i = 0; i < SIZE; i++) {
